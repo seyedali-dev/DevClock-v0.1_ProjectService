@@ -1,0 +1,31 @@
+#file: noinspection HttpUrlsUsage
+
+spring:
+  #enable .env.properties file
+  config:
+    import: optional:classpath:.env.properties
+
+--- # Eureka client
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka
+
+--- # Keycloak
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${KEYCLOAK_SERVER_HOST:localhost}:8080/realms/DevVault-v2.0
+
+--- # Swagger
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: ${KEYCLOAK_CLIENT_ID}
+      client-secret: ${KEYCLOAK_CLIENT_SECRET}
