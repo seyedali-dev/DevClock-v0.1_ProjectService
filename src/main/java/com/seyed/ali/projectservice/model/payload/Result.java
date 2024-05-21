@@ -1,4 +1,4 @@
-package com.seyed.ali.projectservice.model.dto;
+package com.seyed.ali.projectservice.model.payload;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
