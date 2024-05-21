@@ -1,7 +1,7 @@
 package com.seyed.ali.projectservice.util.converter;
 
 import com.seyed.ali.projectservice.model.domain.Project;
-import com.seyed.ali.projectservice.service.interfaces.ProjectDTO;
+import com.seyed.ali.projectservice.model.payload.ProjectDTO;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
