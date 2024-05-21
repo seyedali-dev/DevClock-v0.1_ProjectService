@@ -1,6 +1,6 @@
 package com.seyed.ali.projectservice.exceptions;
 
-import com.seyed.ali.projectservice.model.dto.Result;
+import com.seyed.ali.projectservice.model.payload.Result;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
