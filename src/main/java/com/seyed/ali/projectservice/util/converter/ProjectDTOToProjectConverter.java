@@ -10,7 +10,7 @@ public class ProjectDTOToProjectConverter implements Converter<ProjectDTO, Proje
 
     @Override
     public Project convert(ProjectDTO source) {
-        return new Project(source.projectId(), source.projectName(), source.projectDescription());
+        return new Project(source.getProjectId(), source.getProjectName(), source.getProjectDescription());
     }
 
 }

@@ -1,9 +1,12 @@
 package com.seyed.ali.projectservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seyed.ali.projectservice.client.TaskServiceClient;
 import com.seyed.ali.projectservice.config.EurekaClientTestConfiguration;
 import com.seyed.ali.projectservice.model.domain.Project;
+import com.seyed.ali.projectservice.model.enums.TaskStatus;
 import com.seyed.ali.projectservice.model.payload.ProjectDTO;
+import com.seyed.ali.projectservice.model.payload.TaskDTO;
 import com.seyed.ali.projectservice.service.interfaces.ProjectService;
 import com.seyed.ali.projectservice.util.converter.KeycloakJwtAuthorityConverter;
 import com.seyed.ali.projectservice.util.converter.ProjectConverter;
@@ -35,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 @WebMvcTest(ProjectController.class) /* since this is not in integration test, rather controller unit test */
 @EnableConfigurationProperties /* to use application.yml-test file */
 @ActiveProfiles("test")
@@ -49,10 +52,12 @@ class ProjectControllerTest {
     private @MockBean ProjectToProjectDTOConverter projectToProjectDTOConverter;
     private @MockBean ProjectConverter projectConverter;
     private @MockBean KeycloakJwtAuthorityConverter keycloakJwtAuthorityConverter;
+    private @MockBean TaskServiceClient taskServiceClient;
     private @Autowired ObjectMapper objectMapper;
     private @Autowired MockMvc mockMvc;
     private Project project;
     private ProjectDTO projectDTO;
+    private TaskDTO taskDTO;
 
     @BeforeEach
     void setUp() {
@@ -61,7 +66,14 @@ class ProjectControllerTest {
         this.project.setProjectName("Test Project");
         this.project.setProjectDescription("Test Description");
 
-        this.projectDTO = new ProjectDTO(this.project.getProjectId(), this.project.getProjectName(), this.project.getProjectDescription());
+        this.taskDTO = new TaskDTO("some_task_id", "some_task", "some_task_desc", TaskStatus.IN_PROGRESS, 1, this.project.getProjectId());
+
+        this.projectDTO = new ProjectDTO();
+        this.projectDTO.setProjectId(this.project.getProjectId());
+        this.projectDTO.setProjectName(this.project.getProjectName());
+        this.projectDTO.setProjectDescription(this.project.getProjectDescription());
+        this.projectDTO.getTaskDTO().add(this.taskDTO);
+
     }
 
     @Test
@@ -88,9 +100,9 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$.flag", is(true)))
                 .andExpect(jsonPath("$.httpStatus", is("CREATED")))
                 .andExpect(jsonPath("$.message", is("Project created successfully.")))
-                .andExpect(jsonPath("$.data.projectId", is(this.projectDTO.projectId())))
-                .andExpect(jsonPath("$.data.projectName", is(this.projectDTO.projectName())))
-                .andExpect(jsonPath("$.data.projectDescription", is(this.projectDTO.projectDescription())))
+                .andExpect(jsonPath("$.data.projectId", is(this.projectDTO.getProjectId())))
+                .andExpect(jsonPath("$.data.projectName", is(this.projectDTO.getProjectName())))
+                .andExpect(jsonPath("$.data.projectDescription", is(this.projectDTO.getProjectDescription())))
         ;
     }
 
@@ -113,9 +125,15 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$.flag", is(true)))
                 .andExpect(jsonPath("$.httpStatus", is("OK")))
                 .andExpect(jsonPath("$.message", is("List of projects.")))
-                .andExpect(jsonPath("$.data[0].projectId", is(this.projectDTO.projectId())))
-                .andExpect(jsonPath("$.data[0].projectName", is(this.projectDTO.projectName())))
-                .andExpect(jsonPath("$.data[0].projectDescription", is(this.projectDTO.projectDescription())))
+                .andExpect(jsonPath("$.data[0].projectId", is(this.projectDTO.getProjectId())))
+                .andExpect(jsonPath("$.data[0].projectName", is(this.projectDTO.getProjectName())))
+                .andExpect(jsonPath("$.data[0].projectDescription", is(this.projectDTO.getProjectDescription())))
+                .andExpect(jsonPath("$.data[0].taskDTO[0].taskId", is("some_task_id")))
+                .andExpect(jsonPath("$.data[0].taskDTO[0].taskName", is("some_task")))
+                .andExpect(jsonPath("$.data[0].taskDTO[0].taskDescription", is("some_task_desc")))
+                .andExpect(jsonPath("$.data[0].taskDTO[0].taskStatus", is("IN_PROGRESS")))
+                .andExpect(jsonPath("$.data[0].taskDTO[0].taskOrder", is(1)))
+                .andExpect(jsonPath("$.data[0].taskDTO[0].projectId", is("1")))
         ;
     }
 
@@ -138,9 +156,9 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$.flag", is(true)))
                 .andExpect(jsonPath("$.httpStatus", is("OK")))
                 .andExpect(jsonPath("$.message", is("Project retrieved successfully. Project ID: '1'.")))
-                .andExpect(jsonPath("$.data.projectId", is(this.projectDTO.projectId())))
-                .andExpect(jsonPath("$.data.projectName", is(this.projectDTO.projectName())))
-                .andExpect(jsonPath("$.data.projectDescription", is(this.projectDTO.projectDescription())))
+                .andExpect(jsonPath("$.data.projectId", is(this.projectDTO.getProjectId())))
+                .andExpect(jsonPath("$.data.projectName", is(this.projectDTO.getProjectName())))
+                .andExpect(jsonPath("$.data.projectDescription", is(this.projectDTO.getProjectDescription())))
         ;
     }
 
@@ -150,7 +168,7 @@ class ProjectControllerTest {
         Project update = new Project();
         update.setProjectName("updated project name.");
 
-        ProjectDTO updateProjectDTO = new ProjectDTO("1", update.getProjectName(), "Test Description");
+        ProjectDTO updateProjectDTO = new ProjectDTO("1", update.getProjectName(), "Test Description", null);
 
         when(this.projectDTOToProjectConverter.convert(isA(ProjectDTO.class))).thenReturn(this.project);
         when(this.projectService.updateProject(isA(String.class), isA(Project.class))).thenReturn(update);
@@ -173,9 +191,9 @@ class ProjectControllerTest {
                 .andExpect(jsonPath("$.flag", is(true)))
                 .andExpect(jsonPath("$.httpStatus", is("OK")))
                 .andExpect(jsonPath("$.message", is("Project for Project ID: -> 1 <- updated successfully.")))
-                .andExpect(jsonPath("$.data.projectId", is(this.projectDTO.projectId())))
+                .andExpect(jsonPath("$.data.projectId", is(this.projectDTO.getProjectId())))
                 .andExpect(jsonPath("$.data.projectName", is("updated project name.")))
-                .andExpect(jsonPath("$.data.projectDescription", is(this.projectDTO.projectDescription())))
+                .andExpect(jsonPath("$.data.projectDescription", is(this.projectDTO.getProjectDescription())))
         ;
     }
 

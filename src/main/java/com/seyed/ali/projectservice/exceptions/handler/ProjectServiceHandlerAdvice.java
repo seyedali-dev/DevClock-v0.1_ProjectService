@@ -1,7 +1,5 @@
 package com.seyed.ali.projectservice.exceptions.handler;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.payload.Result;
 import org.springframework.http.ResponseEntity;
@@ -37,19 +35,10 @@ public class ProjectServiceHandlerAdvice {
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ResponseEntity<Result> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        String errorMessage = "Invalid request format. Please check your request and try again.";
-        Throwable cause = e.getCause();
-
-        if (cause instanceof JsonParseException jsonParseException) {
-            errorMessage = "JSON parse error: " + jsonParseException.getOriginalMessage();
-        } else if (cause instanceof JsonMappingException jsonMappingException) {
-            errorMessage = "JSON mapping error at " + jsonMappingException.getPathReference() + ": " + jsonMappingException.getOriginalMessage();
-        }
-
         return ResponseEntity.status(BAD_REQUEST).body(new Result(
                 false,
                 BAD_REQUEST,
-                errorMessage,
+                "There was an error parsing JSON.",
                 e.getMessage()
         ));
     }

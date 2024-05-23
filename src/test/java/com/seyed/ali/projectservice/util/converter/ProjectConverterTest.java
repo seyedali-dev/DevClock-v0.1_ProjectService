@@ -34,7 +34,7 @@ class ProjectConverterTest {
         this.project.setProjectName("Test");
         this.project.setProjectDescription("Test");
 
-        this.projectDTO = new ProjectDTO(this.project.getProjectId(), this.project.getProjectName(), this.project.getProjectDescription());
+        this.projectDTO = new ProjectDTO(this.project.getProjectId(), this.project.getProjectName(), this.project.getProjectDescription(), null);
 
         this.projectList = new ArrayList<>();
         this.projectList.add(this.project);
