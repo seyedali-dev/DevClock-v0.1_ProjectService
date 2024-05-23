@@ -1,8 +1,10 @@
 package com.seyed.ali.projectservice.controller;
 
+import com.seyed.ali.projectservice.client.TaskServiceClient;
 import com.seyed.ali.projectservice.model.domain.Project;
 import com.seyed.ali.projectservice.model.payload.ProjectDTO;
 import com.seyed.ali.projectservice.model.payload.Result;
+import com.seyed.ali.projectservice.model.payload.TaskDTO;
 import com.seyed.ali.projectservice.service.interfaces.ProjectService;
 import com.seyed.ali.projectservice.util.converter.ProjectConverter;
 import com.seyed.ali.projectservice.util.converter.ProjectDTOToProjectConverter;
@@ -32,6 +34,7 @@ public class ProjectController {
     private final ProjectDTOToProjectConverter projectDTOToProjectConverter;
     private final ProjectToProjectDTOConverter projectToProjectDTOConverter;
     private final ProjectConverter projectConverter;
+    private final TaskServiceClient taskServiceClient;
 
     @PostMapping
     public ResponseEntity<Result> createProject(@RequestBody ProjectDTO projectDTO) {
@@ -56,8 +59,14 @@ public class ProjectController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProjectDTO.class)))
             )
     })
-    public ResponseEntity<Result> getTimeEntries() {
-        List<ProjectDTO> projectDTOList = this.projectConverter.convertToProjectDTOList(this.projectService.getProjects());
+    public ResponseEntity<Result> getProjects() {
+        List<ProjectDTO> projectDTOList = this.projectConverter.convertToProjectDTOList(this.projectService.getProjects())
+                .stream()
+                .peek(projectDTO -> {
+                    List<TaskDTO> tasksForProject = this.taskServiceClient.findAllTasksForProject(projectDTO.getProjectId());
+                    tasksForProject.forEach(taskDTO -> projectDTO.getTaskDTO().add(taskDTO));
+                })
+                .toList();
 
         return ResponseEntity.ok(new Result(
                 true,

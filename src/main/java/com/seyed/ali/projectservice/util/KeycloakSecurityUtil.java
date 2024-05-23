@@ -1,10 +1,14 @@
 package com.seyed.ali.projectservice.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -58,6 +62,14 @@ public class KeycloakSecurityUtil {
         }
 
         return authorities;
+    }
+
+    public String extractTokenFromSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+            return jwtAuthenticationToken.getToken().getTokenValue();
+        }
+        throw new ResourceNotFoundException("No JWT token found in security context");
     }
 
 }
