@@ -39,7 +39,7 @@ public class ProjectController {
     private final TaskServiceClient taskServiceClient;
 
     @PostMapping
-    @Operation(summary = "Add a time entry manually", description = "Adds a new time entry to the database manually")
+    @Operation(summary = "Create project", description = "Create a project.")
     public ResponseEntity<Result> createProject(@RequestBody ProjectDTO projectDTO) {
         Project project = this.projectDTOToProjectConverter.convert(projectDTO);
         Project createdProject = this.projectService.createProject(project);
@@ -55,7 +55,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all time projects", responses = {
+    @Operation(summary = "Get all projects", responses = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Successful operation",

@@ -18,7 +18,7 @@ public class ProjectClientServiceImpl implements ProjectClientService {
     @Override
     public boolean validateProjectsExistence(String projectId) {
         Project project = this.projectService.getProjectById(projectId);
-        return project == null;
+        return project != null;
     }
 
 }
