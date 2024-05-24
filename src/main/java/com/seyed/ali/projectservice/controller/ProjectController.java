@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/project")
 @SecurityRequirement(name = "Keycloak")
+@Tag(name = "Project", description = "API for project operation.")
 public class ProjectController {
 
     private final ProjectService projectService;
@@ -37,6 +39,7 @@ public class ProjectController {
     private final TaskServiceClient taskServiceClient;
 
     @PostMapping
+    @Operation(summary = "Add a time entry manually", description = "Adds a new time entry to the database manually")
     public ResponseEntity<Result> createProject(@RequestBody ProjectDTO projectDTO) {
         Project project = this.projectDTOToProjectConverter.convert(projectDTO);
         Project createdProject = this.projectService.createProject(project);
@@ -77,6 +80,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
+    @Operation(summary = "Get a specific project", description = "Fetches a specific project from the database")
     public ResponseEntity<Result> getSpecificProject(@PathVariable String projectId) {
         ProjectDTO projectDTO = this.projectConverter.convertToProjectDTO(this.projectService.getProjectById(projectId));
         return ResponseEntity.ok(new Result(
@@ -88,6 +92,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
+    @Operation(summary = "Update a project", description = "Updates a specific project in the database")
     public ResponseEntity<Result> updateProject(@Valid @PathVariable String projectId, @RequestBody ProjectDTO projectDTO) {
         Project project = this.projectDTOToProjectConverter.convert(projectDTO);
         Project updatedProject = this.projectService.updateProject(projectId, project);
@@ -102,6 +107,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{projectId}")
+    @Operation(summary = "Delete a project", description = "Deletes a specific project from the database")
     public ResponseEntity<Result> deleteProject(@PathVariable String projectId) {
         this.projectService.deleteProject(projectId);
         return ResponseEntity.status(NO_CONTENT).body(new Result(
