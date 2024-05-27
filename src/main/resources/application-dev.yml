@@ -29,3 +29,18 @@ springdoc:
     oauth:
       client-id: ${KEYCLOAK_CLIENT_ID}
       client-secret: ${KEYCLOAK_CLIENT_SECRET}
+
+--- # Kafka
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+
+      #configure serialize classes for key & value pair *
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+--- # Custom Variables
+kafka:
+  topic:
+    name: project_topic

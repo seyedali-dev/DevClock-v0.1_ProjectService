@@ -1,5 +1,6 @@
 package com.seyed.ali.projectservice.service;
 
+import com.seyed.ali.projectservice.event.KafkaProducerEvent;
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.domain.Project;
 import com.seyed.ali.projectservice.repository.ProjectRepository;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final KafkaProducerEvent kafkaProducerEvent;
 
     @Override
     public Project createProject(Project project) {
@@ -48,7 +50,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProject(String projectId) {
-        this.projectRepository.deleteById(projectId);
+        Project project = this.getProjectById(projectId);
+
+        // send the project object as event
+        this.kafkaProducerEvent.sendMessage(project);
+
+        this.projectRepository.delete(project);
     }
 
 }

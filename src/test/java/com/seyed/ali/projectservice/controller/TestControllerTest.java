@@ -1,22 +1,25 @@
 package com.seyed.ali.projectservice.controller;
 
 import com.seyed.ali.projectservice.config.EurekaClientTestConfiguration;
+import com.seyed.ali.projectservice.config.event.KafkaConfiguration;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.lang.reflect.Field;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -30,9 +33,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {EurekaClientTestConfiguration.class}) /* to call the configuration in the test (for service-registry configs) */
 public class TestControllerTest {
 
-    //<editor-fold desc="fields">
     private @Autowired MockMvc mockMvc;
-    //</editor-fold>
+
+    @BeforeEach
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
+        Field valueField = KafkaConfiguration.class // the service class
+                .getDeclaredField("topicName"); // the @Value field
+        valueField.setAccessible(true);
+        valueField.set(KafkaConfiguration.class, "some_topic");
+    }
 
     @Test
     public void helloTest() throws Exception {
