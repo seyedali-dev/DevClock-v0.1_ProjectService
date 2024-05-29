@@ -1,6 +1,6 @@
 package com.seyed.ali.projectservice.service;
 
-import com.seyed.ali.projectservice.event.KafkaProducerEvent;
+import com.seyed.ali.projectservice.event.KafkaEventProducer;
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.domain.Project;
 import com.seyed.ali.projectservice.repository.ProjectRepository;
@@ -24,7 +24,7 @@ class ProjectServiceImplTest {
 
     private @InjectMocks ProjectServiceImpl projectService;
     private @Mock ProjectRepository projectRepository;
-    private @Mock KafkaProducerEvent kafkaProducerEvent;
+    private @Mock KafkaEventProducer kafkaEventProducer;
 
     private Project project;
 
@@ -125,7 +125,7 @@ class ProjectServiceImplTest {
         String id = this.project.getProjectId();
         when(this.projectRepository.findById(id)).thenReturn(Optional.ofNullable(this.project));
         doNothing().when(this.projectRepository).delete(isA(Project.class));
-        doNothing().when(this.kafkaProducerEvent).sendMessage(isA(Object.class));
+        doNothing().when(this.kafkaEventProducer).sendMessage(isA(Object.class));
 
         // When
         this.projectService.deleteProject(id);
@@ -133,7 +133,7 @@ class ProjectServiceImplTest {
         // Then
         verify(this.projectRepository, times(1)).findById(isA(String.class));
         verify(this.projectRepository, times(1)).delete(isA(Project.class));
-        verify(this.kafkaProducerEvent, times(1)).sendMessage(isA(Object.class));
+        verify(this.kafkaEventProducer, times(1)).sendMessage(isA(Object.class));
     }
 
 }

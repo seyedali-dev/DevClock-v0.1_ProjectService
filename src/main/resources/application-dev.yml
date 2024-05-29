@@ -36,7 +36,7 @@ spring:
     producer:
       bootstrap-servers: localhost:9092
 
-      #configure serialize classes for key & value pair *
+      #configure serialize classes for key & value pair
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
