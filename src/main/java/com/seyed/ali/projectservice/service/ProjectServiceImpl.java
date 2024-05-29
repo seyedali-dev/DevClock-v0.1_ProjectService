@@ -1,6 +1,7 @@
 package com.seyed.ali.projectservice.service;
 
 import com.seyed.ali.projectservice.event.KafkaEventProducer;
+import com.seyed.ali.projectservice.event.ProjectEvent;
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.domain.Project;
 import com.seyed.ali.projectservice.repository.ProjectRepository;
@@ -52,10 +53,20 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(String projectId) {
         Project project = this.getProjectById(projectId);
 
-        // send the project object as event
-        this.kafkaEventProducer.sendMessage(project);
+        sendMessageToBroker(project);
 
         this.projectRepository.delete(project);
+    }
+
+    private void sendMessageToBroker(Project project) {
+        // create a project_event object
+        ProjectEvent projectEvent = ProjectEvent.builder()
+                .message("Sending projectID: " + project.getProjectId() + " as event")
+                .project(project)
+                .build();
+
+        // send the project object as event
+        this.kafkaEventProducer.sendMessage(projectEvent);
     }
 
 }

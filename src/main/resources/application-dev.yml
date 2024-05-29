@@ -39,6 +39,9 @@ spring:
       #configure serialize classes for key & value pair
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.type.mapping: projectEvent:com.seyed.ali.projectservice.event.ProjectEvent
 
 --- # Custom Variables
 kafka:
