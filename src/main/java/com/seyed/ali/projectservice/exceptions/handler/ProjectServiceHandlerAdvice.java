@@ -2,6 +2,8 @@ package com.seyed.ali.projectservice.exceptions.handler;
 
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.payload.Result;
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,6 +41,16 @@ public class ProjectServiceHandlerAdvice {
                 false,
                 BAD_REQUEST,
                 "There was an error parsing JSON.",
+                e.getMessage()
+        ));
+    }
+
+    @ExceptionHandler({HttpHostConnectException.class})
+    public ResponseEntity<Result> handleHttpHostConnectException(HttpHostConnectException e) {
+        return ResponseEntity.status(SERVICE_UNAVAILABLE).body(new Result(
+                false,
+                SERVICE_UNAVAILABLE,
+                "Could not connect to services 🫡",
                 e.getMessage()
         ));
     }

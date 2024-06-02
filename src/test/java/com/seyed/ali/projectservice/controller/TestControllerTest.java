@@ -2,12 +2,10 @@ package com.seyed.ali.projectservice.controller;
 
 import com.seyed.ali.projectservice.config.EurekaClientTestConfiguration;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,9 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {EurekaClientTestConfiguration.class}) /* to call the configuration in the test (for service-registry configs) */
 public class TestControllerTest {
 
-    //<editor-fold desc="fields">
     private @Autowired MockMvc mockMvc;
-    //</editor-fold>
 
     @Test
     public void helloTest() throws Exception {

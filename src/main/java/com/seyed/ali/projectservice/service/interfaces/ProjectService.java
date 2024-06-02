@@ -14,6 +14,8 @@ public interface ProjectService {
 
     Project updateProject(String projectId, Project project);
 
-    void deleteProject(String projectId);
+    void deleteProjectAndAssociatedTasksAndTimeEntries(String projectId);
+
+    void deleteProjectAndDetachFromTasksAndTimeEntries(String projectId);
 
 }

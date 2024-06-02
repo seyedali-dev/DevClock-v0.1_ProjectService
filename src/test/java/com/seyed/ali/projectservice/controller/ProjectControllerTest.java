@@ -203,7 +203,7 @@ class ProjectControllerTest {
         String id = "1";
         doNothing()
                 .when(this.projectService)
-                .deleteProject(id);
+                .deleteProjectAndAssociatedTasksAndTimeEntries(id);
 
         String someAuthority = "some_authority";
 
