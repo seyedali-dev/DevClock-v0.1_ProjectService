@@ -23,8 +23,8 @@ public class ProjectConverter {
         return projectDTOList;
     }
 
-    public ProjectDTO convertToProjectDTO(Project projectById) {
-        return this.projectToProjectDTOConverter.convert(projectById);
+    public ProjectDTO convertToProjectDTO(Project projectId) {
+        return this.projectToProjectDTOConverter.convert(projectId);
     }
 
 }

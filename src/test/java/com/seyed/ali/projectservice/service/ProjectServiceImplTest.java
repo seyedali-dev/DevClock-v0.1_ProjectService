@@ -1,8 +1,12 @@
 package com.seyed.ali.projectservice.service;
 
+import com.seyed.ali.projectservice.event.ProjectEventProducer;
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.domain.Project;
+import com.seyed.ali.projectservice.model.enums.OperationType;
+import com.seyed.ali.projectservice.model.payload.ProjectDTO;
 import com.seyed.ali.projectservice.repository.ProjectRepository;
+import com.seyed.ali.projectservice.util.converter.ProjectConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +27,8 @@ class ProjectServiceImplTest {
 
     private @InjectMocks ProjectServiceImpl projectService;
     private @Mock ProjectRepository projectRepository;
+    private @Mock ProjectEventProducer projectEventProducer;
+    private @Mock ProjectConverter projectConverter;
 
     private Project project;
 
@@ -118,18 +124,25 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    public void deleteTimeEntryTest() {
+    public void deleteOrDetachProjectAndAssociatedTasksAndTimeEntriesTest() {
         // Given
         String id = "Some_timeEntry_id";
+        when(this.projectRepository.findById(isA(String.class))).thenReturn(Optional.ofNullable(this.project));
+        ProjectDTO projectDTO = new ProjectDTO();
+        when(this.projectConverter.convertToProjectDTO(isA(Project.class))).thenReturn(projectDTO);
+        doNothing()
+                .when(this.projectEventProducer)
+                .sendMessage(isA(ProjectDTO.class), isA(OperationType.class));
         doNothing()
                 .when(this.projectRepository)
-                .deleteById(id);
+                .delete(this.project);
 
         // When
         this.projectService.deleteProjectAndAssociatedTasksAndTimeEntries(id);
 
         // Then
-        verify(this.projectRepository, times(1)).deleteById(id);
+        verify(this.projectRepository, times(1)).findById(isA(String.class));
+        verify(this.projectRepository, times(1)).delete(isA(Project.class));
     }
 
 }
