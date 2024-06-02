@@ -1,4 +1,4 @@
-package com.seyed.ali.projectservice.kafka;
+package com.seyed.ali.projectservice.event;
 
 import com.seyed.ali.projectservice.model.payload.ProjectDTO;
 import lombok.RequiredArgsConstructor;

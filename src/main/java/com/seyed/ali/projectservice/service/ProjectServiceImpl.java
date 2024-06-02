@@ -1,7 +1,7 @@
 package com.seyed.ali.projectservice.service;
 
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
-import com.seyed.ali.projectservice.kafka.ProjectEventProducer;
+import com.seyed.ali.projectservice.event.ProjectEventProducer;
 import com.seyed.ali.projectservice.model.domain.Project;
 import com.seyed.ali.projectservice.repository.ProjectRepository;
 import com.seyed.ali.projectservice.service.interfaces.ProjectService;
