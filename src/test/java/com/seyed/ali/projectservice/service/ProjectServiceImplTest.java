@@ -126,7 +126,7 @@ class ProjectServiceImplTest {
                 .deleteById(id);
 
         // When
-        this.projectService.deleteProject(id);
+        this.projectService.deleteProjectAndAssociatedTasksAndTimeEntries(id);
 
         // Then
         verify(this.projectRepository, times(1)).deleteById(id);

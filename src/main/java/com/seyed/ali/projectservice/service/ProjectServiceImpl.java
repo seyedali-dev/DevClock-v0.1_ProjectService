@@ -1,8 +1,9 @@
 package com.seyed.ali.projectservice.service;
 
-import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.event.ProjectEventProducer;
+import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.domain.Project;
+import com.seyed.ali.projectservice.model.enums.OperationType;
 import com.seyed.ali.projectservice.repository.ProjectRepository;
 import com.seyed.ali.projectservice.service.interfaces.ProjectService;
 import com.seyed.ali.projectservice.util.converter.ProjectConverter;
@@ -51,9 +52,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void deleteProject(String projectId) {
+    public void deleteProjectAndAssociatedTasksAndTimeEntries(String projectId) {
         Project project = this.getProjectById(projectId);
-        this.projectEventProducer.sendMessage(this.projectConverter.convertToProjectDTO(project));
+        this.projectEventProducer.sendMessage(this.projectConverter.convertToProjectDTO(project), OperationType.DELETE);
+        this.projectRepository.delete(project);
+    }
+
+    @Override
+    public void deleteProjectAndDetachFromTasksAndTimeEntries(String projectId) {
+        Project project = this.getProjectById(projectId);
+        this.projectEventProducer.sendMessage(this.projectConverter.convertToProjectDTO(project), OperationType.DETACH);
         this.projectRepository.delete(project);
     }
 

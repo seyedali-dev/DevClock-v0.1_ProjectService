@@ -107,9 +107,20 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{projectId}")
-    @Operation(summary = "Delete a project", description = "Deletes a specific project from the database")
-    public ResponseEntity<Result> deleteProject(@PathVariable String projectId) {
-        this.projectService.deleteProject(projectId);
+    @Operation(summary = "Delete a project, tasks & time entries related.", description = "Deletes a specific project from the database and the associated tasks and time entries.")
+    public ResponseEntity<Result> deleteProjectAndAssociatedTasksAndTimeEntries(@PathVariable String projectId) {
+        this.projectService.deleteProjectAndAssociatedTasksAndTimeEntries(projectId);
+        return ResponseEntity.status(NO_CONTENT).body(new Result(
+                true,
+                NO_CONTENT,
+                "Project -> " + projectId + " <-- deleted successfully."
+        ));
+    }
+
+    @DeleteMapping("/detach/{projectId}")
+    @Operation(summary = "Delete & Detach a project from tasks and time entries", description = "Delete & Detaches a specific project from the associated tasks and time entries.")
+    public ResponseEntity<Result> deleteAndDetachProject(@PathVariable String projectId) {
+        this.projectService.deleteProjectAndDetachFromTasksAndTimeEntries(projectId);
         return ResponseEntity.status(NO_CONTENT).body(new Result(
                 true,
                 NO_CONTENT,

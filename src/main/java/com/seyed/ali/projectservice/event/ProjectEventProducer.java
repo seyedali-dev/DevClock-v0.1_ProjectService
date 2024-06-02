@@ -1,5 +1,6 @@
 package com.seyed.ali.projectservice.event;
 
+import com.seyed.ali.projectservice.model.enums.OperationType;
 import com.seyed.ali.projectservice.model.payload.ProjectDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +19,12 @@ public class ProjectEventProducer {
     private final NewTopic topic;
     private final KafkaTemplate<String, ProjectDTO> kafkaTemplate;
 
-    public void sendMessage(ProjectDTO projectDTO) {
+    public void sendMessage(ProjectDTO projectDTO, OperationType operationType) {
         try {
             Message<ProjectDTO> message = MessageBuilder
                     .withPayload(projectDTO)
                     .setHeader(KafkaHeaders.TOPIC, this.topic.name())
+                    .setHeader("OperationType", operationType.name())
                     .build();
 
             this.kafkaTemplate.send(message)
