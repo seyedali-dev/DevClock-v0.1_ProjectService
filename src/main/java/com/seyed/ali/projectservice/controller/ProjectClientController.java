@@ -1,7 +1,9 @@
 package com.seyed.ali.projectservice.controller;
 
+import com.seyed.ali.projectservice.model.payload.ProjectDTO;
 import com.seyed.ali.projectservice.model.payload.Result;
 import com.seyed.ali.projectservice.service.interfaces.ProjectClientService;
+import com.seyed.ali.projectservice.util.converter.ProjectConverter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,10 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -27,6 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class ProjectClientController {
 
     private final ProjectClientService projectClientService;
+    private final ProjectConverter projectConverter;
 
     @GetMapping("/{projectId}")
     @Operation(summary = "Validate Project Existence", description = "Validates whether the specified `projectID` is valid or not.", responses = {
@@ -43,6 +43,18 @@ public class ProjectClientController {
                 "The project with id " + projectId + " exists and is valid.",
                 this.projectClientService.validateProjectsExistence(projectId)
         );
+    }
+
+    @GetMapping("/projects")
+    @Operation(summary = "Get Project By Criteria", description = "Fetches the project based on the provided criteria(ProjectID or ProjectName)", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = @Content(schema = @Schema(implementation = ProjectDTO.class))
+            )
+    })
+    public ProjectDTO getProjectByNameOrId(@RequestParam("identifier") String identifier) {
+        return this.projectConverter.convertToProjectDTO(this.projectClientService.getProjectByNameOrId(identifier));
     }
 
 }
