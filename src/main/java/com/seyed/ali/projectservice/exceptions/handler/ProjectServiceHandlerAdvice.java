@@ -1,9 +1,9 @@
 package com.seyed.ali.projectservice.exceptions.handler;
 
+import com.seyed.ali.projectservice.exceptions.OperationNotSupportedException;
 import com.seyed.ali.projectservice.exceptions.ResourceNotFoundException;
 import com.seyed.ali.projectservice.model.payload.Result;
 import org.apache.hc.client5.http.HttpHostConnectException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,6 +32,16 @@ public class ProjectServiceHandlerAdvice {
                 NOT_FOUND,
                 "The requested resource was not found.",
                 "ServerMessage - " + e.getMessage()
+        ));
+    }
+
+    @ExceptionHandler({OperationNotSupportedException.class})
+    public ResponseEntity<Result> handleOperationNotSupportedException(OperationNotSupportedException e) {
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new Result(
+                false,
+                INTERNAL_SERVER_ERROR,
+                "This operation is not supported!",
+                "ServerMessage 🚫 - " + e.getMessage()
         ));
     }
 
