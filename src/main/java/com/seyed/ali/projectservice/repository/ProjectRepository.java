@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, String> {
 
@@ -14,6 +15,6 @@ public interface ProjectRepository extends JpaRepository<Project, String> {
             SELECT p FROM Project p
             WHERE p.projectId=:identifier OR lower(p.projectName) = lower(:identifier)
             """)
-    Project findByProjectIdOrProjectName(@Param("identifier") String identifier);
+    Optional<Project> findByProjectIdOrProjectName(@Param("identifier") String identifier);
 
 }

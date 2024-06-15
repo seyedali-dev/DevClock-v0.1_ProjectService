@@ -13,11 +13,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unused")
 @ExtendWith(MockitoExtension.class)
 public class ProjectClientServiceImplTest {
 
@@ -36,7 +38,7 @@ public class ProjectClientServiceImplTest {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setProjectId(projectId);
         projectDTO.setProjectName("Project 1");
-        when(this.projectRepository.findByProjectIdOrProjectName(isA(String.class))).thenReturn(project);
+        when(this.projectRepository.findByProjectIdOrProjectName(isA(String.class))).thenReturn(Optional.of(project));
 
         // when
         Project result = this.projectClientService.getProjectByNameOrId(projectId);

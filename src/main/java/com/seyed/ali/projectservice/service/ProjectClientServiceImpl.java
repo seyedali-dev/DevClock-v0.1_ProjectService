@@ -29,7 +29,8 @@ public class ProjectClientServiceImpl implements ProjectClientService {
      */
     @Override
     public Project getProjectByNameOrId(String identifier) throws ResourceNotFoundException {
-        return this.projectRepository.findByProjectIdOrProjectName(identifier);
+        return this.projectRepository.findByProjectIdOrProjectName(identifier)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with the provided identifier: " + identifier));
     }
 
 }
