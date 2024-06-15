@@ -64,6 +64,7 @@ class ProjectClientControllerTest {
         projectDTO.setProjectId(projectId);
         projectDTO.setProjectName("Project 1");
         when(this.projectConverter.convertToProjectDTO(isA(Project.class))).thenReturn(projectDTO);
+        when(this.projectClientService.getProjectByNameOrId(isA(String.class))).thenReturn(new Project());
 
         // when
         ResultActions response = this.mockMvc.perform(
