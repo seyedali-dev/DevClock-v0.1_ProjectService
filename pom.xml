@@ -137,6 +137,8 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <finalName>project</finalName>
     </build>
 
 </project>
