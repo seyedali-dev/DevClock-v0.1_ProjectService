@@ -5,6 +5,10 @@ spring:
   config:
     import: optional:classpath:.env.properties
 
+#logging:
+#  level:
+#    org.apache.kafka: DEBUG
+
 --- # Eureka client
 eureka:
   instance:
@@ -13,7 +17,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8761/eureka
 
 --- # Keycloak
 spring:
@@ -34,7 +38,7 @@ springdoc:
 spring:
   kafka:
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: ${KAFKA_SERVER_HOST_AND_PORT:localhost:9092}
 
       #configure serialize classes for key & value pair
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

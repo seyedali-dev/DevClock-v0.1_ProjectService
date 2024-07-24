@@ -37,7 +37,7 @@ springdoc:
 spring:
   kafka:
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: ${KAFKA_SERVER_HOST:localhost}:${KAFKA_SERVER_PORT:9092}
 
       #configure serialize classes for key & value pair
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
